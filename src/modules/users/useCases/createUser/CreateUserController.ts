@@ -6,7 +6,29 @@ class CreateUserController {
   constructor(private createUserUseCase: CreateUserUseCase) {}
 
   handle(request: Request, response: Response): Response {
-    // Complete aqui
+    try {
+      const { name, email } = request.body;
+
+      if (!name) {
+        return response
+          .status(400)
+          .json({ message: "Field 'name' is required" });
+      }
+
+      if (!email) {
+        return response
+          .status(400)
+          .json({ message: "Field 'email' is required" });
+      }
+
+      const newUser = this.createUserUseCase.execute({ name, email });
+
+      return response.status(201).json(newUser);
+    } catch (err) {
+      return response
+        .status(err.status || 500)
+        .json({ error: err.message || "Internal error" });
+    }
   }
 }
 

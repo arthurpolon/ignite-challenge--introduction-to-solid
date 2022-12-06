@@ -1,3 +1,4 @@
+import { CustomError } from "../../../../customError";
 import { User } from "../../model/User";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 
@@ -9,7 +10,15 @@ class TurnUserAdminUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute({ user_id }: IRequest): User {
-    // Complete aqui
+    const user = this.usersRepository.findById(user_id);
+
+    if (!user) {
+      throw new CustomError({ status: 404, message: "User not found" });
+    }
+
+    this.usersRepository.turnAdmin(user);
+
+    return user;
   }
 }
 
